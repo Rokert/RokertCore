@@ -1,9 +1,14 @@
+using System;
+using System.Collections.Generic;
+
 namespace Rokert.Core
 {
     /// <summary>Static facade over a default <see cref="ServiceRegistry"/> for convenient access at the edges.</summary>
     public static class ServiceLocator
     {
         public static ServiceRegistry Registry { get; } = new ServiceRegistry();
+
+        public static IReadOnlyCollection<Type> RegisteredTypes => Registry.RegisteredTypes;
 
         public static void Register<T>(T service) where T : IService => Registry.Register(service);
         public static void Replace<T>(T service) where T : IService => Registry.Replace(service);

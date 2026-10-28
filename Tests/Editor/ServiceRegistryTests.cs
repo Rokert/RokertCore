@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Rokert.Core.Tests
@@ -100,6 +101,81 @@ namespace Rokert.Core.Tests
             _registry.ClearScoped();
 
             Assert.IsFalse(_registry.IsRegistered<IAds>());
+        }
+
+        [Test]
+        public void Get_Throws_ForADeadService_AndSaysSo()
+        {
+            var audio = new Audio();
+            _registry.Register<IAudio>(audio);
+            _registry.IsAlive = service => !ReferenceEquals(service, audio);
+
+            var ex = Assert.Throws<InvalidOperationException>(() => _registry.Get<IAudio>());
+
+            StringAssert.Contains("destroyed", ex.Message);
+        }
+
+        [Test]
+        public void DeadService_BehavesAsIfItWasNeverRegistered()
+        {
+            var audio = new Audio();
+            _registry.Register<IAudio>(audio);
+            _registry.IsAlive = service => !ReferenceEquals(service, audio);
+
+            Assert.IsFalse(_registry.IsRegistered<IAudio>());
+            Assert.IsFalse(_registry.TryGet<IAudio>(out _));
+            Assert.IsFalse(_registry.RegisteredTypes.Contains(typeof(IAudio)), "the dead entry is dropped");
+        }
+
+        [Test]
+        public void DeadService_CanBeRegisteredAgain()
+        {
+            var first = new Audio();
+            var second = new Audio();
+            _registry.Register<IAudio>(first);
+            _registry.IsAlive = service => !ReferenceEquals(service, first);
+
+            _registry.Register<IAudio>(second); // would throw if the dead entry were still there
+
+            Assert.AreSame(second, _registry.Get<IAudio>());
+        }
+
+        [Test]
+        public void Get_Message_ListsWhatIsRegistered()
+        {
+            _registry.Register<IAds>(new PersistentAds());
+
+            var ex = Assert.Throws<InvalidOperationException>(() => _registry.Get<IAudio>());
+
+            StringAssert.Contains("IAudio", ex.Message);
+            StringAssert.Contains("IAds", ex.Message);
+        }
+
+        [Test]
+        public void Get_Message_SaysNothingIsRegistered_OnAnEmptyRegistry()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => _registry.Get<IAudio>());
+
+            StringAssert.Contains("nothing", ex.Message);
+        }
+
+        [Test]
+        public void Get_Message_HintsAtRegisteringUnderTheInterface()
+        {
+            _registry.Register(new Audio()); // T is inferred as the concrete Audio, not IAudio
+
+            var ex = Assert.Throws<InvalidOperationException>(() => _registry.Get<IAudio>());
+
+            StringAssert.Contains("Register<IAudio>", ex.Message);
+        }
+
+        [Test]
+        public void RegisteredTypes_ListsTheKeys()
+        {
+            _registry.Register<IAudio>(new Audio());
+            _registry.Register<IAds>(new PersistentAds());
+
+            CollectionAssert.AreEquivalent(new[] { typeof(IAudio), typeof(IAds) }, _registry.RegisteredTypes);
         }
 
         [Test]
