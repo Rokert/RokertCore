@@ -1,0 +1,16 @@
+{
+    "name": "Rokert.Core.Bindings",
+    "rootNamespace": "Rokert.Core.Bindings",
+    "references": [
+        "Rokert.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

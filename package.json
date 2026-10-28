@@ -1,0 +1,9 @@
+{
+  "name": "com.rokert.core",
+  "displayName": "Rokert Core",
+  "version": "0.1.0",
+  "unity": "6000.0",
+  "description": "Reusable engine-agnostic patterns for Rokert games: service locator, event bus, state machine, undoable commands and object pool.",
+  "keywords": ["patterns", "service-locator", "event-bus", "state-machine", "command", "pool"],
+  "author": { "name": "Julian (Rokert)" }
+}
