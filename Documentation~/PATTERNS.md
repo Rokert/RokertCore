@@ -17,6 +17,11 @@ var ads = ServiceLocator.Get<IAdService>();
 - `ClearScoped()` on scene teardown keeps persistent services.
 - `Register` throws on duplicates. Use `Replace` to swap on purpose (tests, mocks).
 - In tests, create a `new ServiceRegistry()` instead of touching the static one.
+- Register under the interface you will ask for: `Register<IAudio>(audio)`. `Register(audio)` infers the concrete type and `Get<IAudio>()` then fails (the error message points this out).
+- A service that is not alive counts as not registered. On the global `ServiceLocator` the Unity binding treats a destroyed `UnityEngine.Object` as dead, so `Get` throws a clear "destroyed" error instead of returning a fake-null object, and the type can be registered again. A `new ServiceRegistry()` keeps the default (`IsAlive` always true) unless you set it.
+- `Get` errors list what is registered; `RegisteredTypes` gives the same list for tooling and tests.
+- Main thread only (no locking). The registry never disposes services: the code that creates a service disposes it.
+- The Unity binding clears the global `ServiceLocator` and `EventBus.Global` at the start of every play session, so Enter Play Mode with domain reload off does not carry services or subscribers over from the last run.
 
 ## Event bus (`EventBus`)
 
