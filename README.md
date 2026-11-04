@@ -49,3 +49,7 @@ Unity ignores assets that have no `.meta` file inside an immutable (git) package
 - Nothing game-specific in this package. If something needs game knowledge, it goes behind an interface.
 - Every pattern ships with EditMode tests and a short entry in `Documentation~/PATTERNS.md`.
 - Keep `Rokert.Core` free of `UnityEngine`; put engine glue in `Rokert.Core.Bindings`.
+
+## Licence
+
+MIT, see `LICENSE`.
