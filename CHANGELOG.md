@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- MIT licence, with its `.meta` so Unity does not warn about it in a package consumed from git.
+
 ## 0.1.1
 
 Service locator hardening (no API removed):
